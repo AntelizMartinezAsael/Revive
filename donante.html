@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mi panel de donante | [Nombre]</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Afacad:wght@400;500;600;700&family=Actor&family=Belanosima:wght@400;600;700&family=Linden+Hill:ital@0;1&family=Roboto+Serif:opsz,wght@8..144,400;8..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+
+  <!-- ============ BARRA LATERAL IZQUIERDA ============ -->
+  <aside class="lateral">
+    <a href="donante.html" class="logo-lat">[Nombre]</a>
+    <div class="usuario">
+      <div class="avatar" id="u-ini">DN</div>
+      <div><h4 id="u-nombre">[Nombre del donante]</h4><small>Donante</small></div>
+    </div>
+    <nav aria-label="Cuenta">
+      <button data-dlg="d-perfil">Perfil</button>
+      <button data-dlg="d-reco">Enviar recomendación</button>
+      <button data-dlg="d-error">Reportar errores</button>
+      <a href="index.html">Cerrar sesión</a>
+    </nav>
+  </aside>
+
+  <!-- ============ PÁGINA PRINCIPAL ============ -->
+  <main class="principal">
+    <h1>Hola, <span id="h-nombre">[Nombre]</span></h1>
+    <p class="relleno">[Mensaje de bienvenida o frase motivadora para el donante.]</p>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" class="activo" data-tab="p-inv">Inventario</button>
+      <button role="tab" data-tab="p-don">Tus donaciones</button>
+      <button role="tab" data-tab="p-rach">Rachas</button>
+      <button role="tab" data-tab="p-anual">Tabla de donaciones anuales</button>
+    </div>
+
+    <!-- Inventario -->
+    <div class="panel" id="p-inv">
+      <div class="panel-cab">
+        <h2>Inventario</h2>
+        <button class="btn azul" data-dlg="d-art">Agregar artículo</button>
+      </div>
+      <p class="vacio" id="inv-vacio">Aún no tienes artículos. Usa “Agregar artículo” para empezar tu inventario.</p>
+      <div class="modulos" id="inv-lista"></div>
+    </div>
+
+    <!-- Tus donaciones -->
+    <div class="panel" id="p-don" hidden>
+      <h2>Tus donaciones</h2>
+      <p class="vacio">[Aquí aparecerá el historial de artículos que ya donaste.]</p>
+    </div>
+
+    <!-- Rachas -->
+    <div class="panel" id="p-rach" hidden>
+      <h2>Rachas</h2>
+      <div class="tarjeta racha">
+        <strong>0</strong><span>semanas seguidas donando</span>
+        <div class="dias" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <p class="relleno">[Explica cómo se gana y se mantiene una racha.]</p>
+    </div>
+
+    <!-- Tabla anual -->
+    <div class="panel" id="p-anual" hidden>
+      <h2>Tabla de donaciones anuales <span id="anio"></span></h2>
+      <div class="tabla-wrap">
+        <table><thead><tr><th>Mes</th><th>Artículos donados</th></tr></thead><tbody id="anual"></tbody></table>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ VENTANAS ============ -->
+  <dialog id="d-art">
+    <div class="modal-cab"><h3>Agregar artículo</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
+    <form class="modal-cuerpo" id="f-art">
+      <div class="campo"><label for="a-nom">Nombre del artículo</label><input id="a-nom" required></div>
+      <div class="campo"><label for="a-cat">Módulo</label>
+        <select id="a-cat"><option>Ropa</option><option>Alimentos</option><option>Útiles escolares</option><option>Higiene</option><option>Juguetes</option><option>Otros</option></select></div>
+      <div class="campo"><label for="a-cant">Cantidad</label><input id="a-cant" type="number" min="1" value="1" required></div>
+      <button class="btn" type="submit" style="width:100%">Guardar artículo</button>
+    </form>
+  </dialog>
+
+  <dialog id="d-perfil">
+    <div class="modal-cab"><h3>Perfil</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
+    <div class="modal-cuerpo">
+      <p class="relleno">[Aquí se mostrarán y podrán editar: nombre, apellidos, fecha de nacimiento, correo, ubicación, teléfono, foto y contraseña.]</p>
+    </div>
+  </dialog>
+
+  <dialog id="d-reco">
+    <div class="modal-cab"><h3>Enviar recomendación</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
+    <form class="modal-cuerpo" action="#"><div class="campo"><label for="r-t">Tu recomendación</label><textarea id="r-t" required></textarea></div><button class="btn" type="submit" style="width:100%">Enviar</button></form>
+  </dialog>
+
+  <dialog id="d-error">
+    <div class="modal-cab"><h3>Reportar errores</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
+    <form class="modal-cuerpo" action="#"><div class="campo"><label for="e-t">¿Qué falló?</label><textarea id="e-t" required></textarea></div><button class="btn" type="submit" style="width:100%">Enviar reporte</button></form>
+  </dialog>
+
+  <script>
+    // Ventanas
+    document.querySelectorAll('[data-dlg]').forEach(b => b.onclick = () => document.getElementById(b.dataset.dlg).showModal());
+    document.querySelectorAll('dialog').forEach(d => {
+      d.addEventListener('click', e => { if (e.target === d || e.target.hasAttribute('data-cerrar')) d.close(); });
+    });
+    document.querySelectorAll('#d-reco form, #d-error form').forEach(f => f.onsubmit = e => { e.preventDefault(); f.reset(); f.closest('dialog').close(); });
+
+    // Pestañas
+    const tabs = document.querySelectorAll('[data-tab]');
+    tabs.forEach(t => t.onclick = () => {
+      tabs.forEach(x => x.classList.toggle('activo', x === t));
+      document.querySelectorAll('.panel').forEach(p => p.hidden = p.id !== t.dataset.tab);
+    });
+
+    // Inventario por módulos (en memoria: conecta aquí tu base de datos)
+    const cats = ['Ropa', 'Alimentos', 'Útiles escolares', 'Higiene', 'Juguetes', 'Otros'];
+    const items = [];
+    function pintar() {
+      const cont = document.getElementById('inv-lista');
+      cont.replaceChildren();
+      cats.forEach(c => {
+        const f = items.filter(i => i.cat === c);
+        if (!f.length) return;
+        const m = document.createElement('article'); m.className = 'tarjeta modulo';
+        const h = document.createElement('h3'); h.textContent = c; m.append(h);
+        f.forEach(i => {
+          const r = document.createElement('div'); r.className = 'art';
+          const n = document.createElement('span'); n.textContent = i.nom + ' × ' + i.cant;
+          const x = document.createElement('button'); x.textContent = 'Quitar'; x.onclick = () => { items.splice(items.indexOf(i), 1); pintar(); };
+          r.append(n, x); m.append(r);
+        });
+        cont.append(m);
+      });
+      document.getElementById('inv-vacio').hidden = items.length > 0;
+    }
+    document.getElementById('f-art').onsubmit = e => {
+      e.preventDefault();
+      items.push({ nom: document.getElementById('a-nom').value.trim(), cat: document.getElementById('a-cat').value, cant: document.getElementById('a-cant').value });
+      e.target.reset(); document.getElementById('d-art').close(); pintar();
+    };
+
+    // Tabla anual
+    document.getElementById('anio').textContent = new Date().getFullYear();
+    document.getElementById('anual').innerHTML = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+      .map(m => `<tr><td>${m}</td><td>0</td></tr>`).join('');
+  </script>
+</body>
+</html>

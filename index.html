@@ -328,7 +328,7 @@
       <h3 id="login-titulo">Iniciar sesión</h3>
       <button type="button" data-cerrar-login aria-label="Cerrar">&times;</button>
     </div>
-    <form class="modal-cuerpo" action="#" method="post">
+    <form class="modal-cuerpo" id="form-login" action="donante.html" method="get">
       <div class="roles" role="radiogroup" aria-label="Tipo de cuenta">
         <div><input type="radio" id="rol-donante" name="rol" value="donante" checked><label for="rol-donante">Donante</label></div>
         <div><input type="radio" id="rol-centro" name="rol" value="centro"><label for="rol-centro">Centro de acopio</label></div>
@@ -336,7 +336,28 @@
       <div class="campo"><label for="l-correo">Correo electrónico</label><input id="l-correo" name="correo" type="email" autocomplete="email" required></div>
       <div class="campo"><label for="l-pass">Contraseña</label><input id="l-pass" name="password" type="password" autocomplete="current-password" required></div>
       <button class="btn" type="submit" style="width:100%">Entrar</button>
-      <p class="modal-pie">¿No tienes cuenta? <a href="#contacto" data-cerrar-login>Contáctanos</a></p>
+      <p class="modal-pie">¿Eres donante y no tienes cuenta? <a href="#" id="abrir-registro">Crear cuenta</a></p>
+    </form>
+  </dialog>
+
+  <!-- ===================== MODAL: REGISTRO DE DONANTE ===================== -->
+  <dialog id="registro" class="ancho" aria-labelledby="reg-titulo">
+    <div class="modal-cab">
+      <h3 id="reg-titulo">Crear cuenta de donante</h3>
+      <button type="button" data-cerrar-registro aria-label="Cerrar">&times;</button>
+    </div>
+    <form class="modal-cuerpo form-grid" action="donante.html" method="get">
+      <div class="campo"><label for="r-nombre">Nombre(s)</label><input id="r-nombre" name="nombre" autocomplete="given-name" required></div>
+      <div class="campo"><label for="r-ap">Apellido paterno</label><input id="r-ap" name="apellido_paterno" autocomplete="family-name" required></div>
+      <div class="campo"><label for="r-am">Apellido materno</label><input id="r-am" name="apellido_materno" required></div>
+      <div class="campo"><label for="r-fecha">Fecha de nacimiento</label><input id="r-fecha" name="fecha_nacimiento" type="date" required></div>
+      <div class="campo"><label for="r-correo">Correo electrónico</label><input id="r-correo" name="correo" type="email" autocomplete="email" required></div>
+      <div class="campo"><label for="r-ubic">Ubicación</label><input id="r-ubic" name="ubicacion" placeholder="Ciudad, estado" required></div>
+      <div class="campo"><label for="r-tel">Teléfono (opcional)</label><input id="r-tel" name="telefono" type="tel" autocomplete="tel"></div>
+      <div class="campo"><label for="r-foto">Foto (opcional)</label><input id="r-foto" name="foto" type="file" accept="image/*"></div>
+      <div class="campo"><label for="r-pass">Contraseña</label><input id="r-pass" name="password" type="password" autocomplete="new-password" minlength="8" required></div>
+      <div class="campo"><label for="r-pass2">Confirmar contraseña</label><input id="r-pass2" type="password" autocomplete="new-password" required></div>
+      <button class="btn completo" type="submit">Crear cuenta</button>
     </form>
   </dialog>
 
@@ -357,6 +378,14 @@
     document.querySelectorAll('[data-abrir-login]').forEach(b => b.addEventListener('click', () => login.showModal()));
     document.querySelectorAll('[data-cerrar-login]').forEach(b => b.addEventListener('click', () => login.close()));
     login.addEventListener('click', e => { if (e.target === login) login.close(); });
+    // Registro de donante
+    const registro = document.getElementById('registro');
+    document.getElementById('abrir-registro').addEventListener('click', e => { e.preventDefault(); login.close(); registro.showModal(); });
+    document.querySelectorAll('[data-cerrar-registro]').forEach(b => b.addEventListener('click', () => registro.close()));
+    registro.addEventListener('click', e => { if (e.target === registro) registro.close(); });
+    const p1 = document.getElementById('r-pass'), p2 = document.getElementById('r-pass2');
+    const validar = () => p2.setCustomValidity(p1.value === p2.value ? '' : 'Las contraseñas no coinciden');
+    p1.addEventListener('input', validar); p2.addEventListener('input', validar);
   </script>
 </body>
 </html>
