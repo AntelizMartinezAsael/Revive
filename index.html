@@ -49,7 +49,7 @@
       <div class="contenedor hero-grid">
         <div>
           <h1>[Titular principal: una frase que motive a donar]</h1>
-          <p class="lead relleno">[Subtítulo: explica en una o dos líneas qué hace la plataforma. Ejemplo: organiza lo que quieres donar y entrégalo en nuestro centro de acopio.]</p>
+          <p class="lead relleno">[Subtítulo: explica en una o dos líneas qué hace la plataforma. Ejemplo: organiza lo que quieres donar y entrégalo en el centro de acopio que tú elijas.]</p>
           <div class="hero-cta">
             <button class="btn azul" data-abrir-login>Quiero donar</button>
             <a class="btn claro" href="#como-funciona">Cómo funciona</a>
@@ -65,7 +65,7 @@
         <div>
           <h2>¿Qué es [Nombre]?</h2>
           <p class="relleno">[DEFINICIÓN: escribe aquí qué es la plataforma, quién la creó y qué problema resuelve.]</p>
-          <p class="relleno">[Segundo párrafo opcional: cómo conecta a donantes con el centro de acopio.]</p>
+          <p class="relleno">[Segundo párrafo opcional: cómo conecta a donantes con los centros de acopio.]</p>
         </div>
         <div class="espacio-imagen" role="img" aria-label="Espacio para imagen">[Imagen o ilustración de la plataforma]</div>
       </div>
@@ -141,7 +141,7 @@
             <p class="relleno">[Qué puede hacer sin registrarse.]</p>
             <ul>
               <li>[Conocer la plataforma]</li>
-              <li>[Conocer el centro de acopio]</li>
+              <li>[Conocer los centros de acopio]</li>
               <li>[Consultar qué se necesita]</li>
             </ul>
             <a class="btn claro" href="#como-funciona">Explorar</a>
@@ -153,7 +153,7 @@
             <p class="relleno">[Qué puede hacer una persona que dona.]</p>
             <ul>
               <li>[Crear su inventario de artículos]</li>
-              <li>[Elegir qué artículos donar]</li>
+              <li>[Elegir qué artículos donar y a qué centro]</li>
               <li>[Dar seguimiento a sus donaciones]</li>
             </ul>
             <button class="btn" data-abrir-login>Entrar como donante</button>
@@ -162,10 +162,11 @@
           <article class="tarjeta perfil centro">
             <div class="icono"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg></div>
             <h3>Centro de acopio</h3>
-            <p class="relleno">[Qué puede hacer el centro.]</p>
+            <p class="relleno">[Qué puede hacer cada centro.]</p>
             <ul>
               <li>[Configurar y administrar su establecimiento]</li>
               <li>[Administrar a sus donantes]</li>
+              <li>[Confirmar la recepción de donaciones]</li>
               <li>[Publicar lo que necesita]</li>
             </ul>
             <button class="btn" data-abrir-login>Entrar como centro</button>
@@ -184,8 +185,8 @@
         <ol class="pasos">
           <li><h4>[Crea tu cuenta]</h4><p>[Describe el paso.]</p></li>
           <li><h4>[Arma tu inventario]</h4><p>[Describe el paso.]</p></li>
-          <li><h4>[Elige qué donar]</h4><p>[Describe el paso.]</p></li>
-          <li><h4>[Entrega y confirma]</h4><p>[Describe el paso.]</p></li>
+          <li><h4>[Elige qué donar y a qué centro]</h4><p>[Describe el paso.]</p></li>
+          <li><h4>[Entrega y el centro confirma]</h4><p>[Describe el paso.]</p></li>
         </ol>
       </div>
     </section>
@@ -215,7 +216,7 @@
             <h4>[Nombre], donante</h4>
           </blockquote>
           <blockquote class="tarjeta" style="margin:0">
-            <p class="relleno">[Testimonio del centro de acopio.]</p>
+            <p class="relleno">[Testimonio de un centro de acopio.]</p>
             <h4>[Nombre], centro de acopio</h4>
           </blockquote>
         </div>
@@ -228,7 +229,7 @@
         <div class="encabezado"><h2>Preguntas frecuentes</h2></div>
         <details><summary>¿Qué artículos puedo donar?</summary><p class="relleno">[Respuesta.]</p></details>
         <details><summary>¿Tiene costo usar la plataforma?</summary><p class="relleno">[Respuesta.]</p></details>
-        <details><summary>¿Dónde está el centro de acopio?</summary><p class="relleno">[Respuesta.]</p></details>
+        <details><summary>¿Dónde están los centros de acopio?</summary><p class="relleno">[Respuesta.]</p></details>
         <details><summary>¿Cómo sé que mi donación llegó?</summary><p class="relleno">[Respuesta.]</p></details>
         <details><summary>¿Puedo donar sin crear una cuenta?</summary><p class="relleno">[Respuesta.]</p></details>
       </div>
@@ -259,8 +260,7 @@
           <ul class="datos-contacto">
             <li><strong>Correo</strong>[correo@ejemplo.com]</li>
             <li><strong>Teléfono</strong>[+52 00 0000 0000]</li>
-            <li><strong>Dirección del centro de acopio</strong>[Calle, número, colonia, ciudad]</li>
-            <li><strong>Horario de recepción</strong>[Días y horas]</li>
+            <li><strong>Centros de acopio</strong>[La dirección y el horario de cada centro están en tu panel de donante.]</li>
             <li><strong>Redes sociales</strong><a href="#">[Facebook]</a> · <a href="#">[Instagram]</a> · <a href="#">[X / Twitter]</a></li>
           </ul>
         </div>
@@ -272,6 +272,7 @@
             <label for="c-asunto">Asunto</label>
             <select id="c-asunto" name="asunto">
               <option>Quiero donar</option>
+              <option>Quiero registrar mi centro de acopio</option>
               <option>Tengo una duda</option>
               <option>Otro</option>
             </select>
@@ -360,32 +361,6 @@
       <button class="btn completo" type="submit">Crear cuenta</button>
     </form>
   </dialog>
-
-  <script>
-    // Menú móvil
-    const menuBtn = document.querySelector('.menu-btn');
-    const menu = document.getElementById('menu');
-    menuBtn.addEventListener('click', () => {
-      const abierto = menu.classList.toggle('abierto');
-      menuBtn.setAttribute('aria-expanded', abierto);
-    });
-    menu.addEventListener('click', e => {
-      if (e.target.tagName === 'A') { menu.classList.remove('abierto'); menuBtn.setAttribute('aria-expanded', 'false'); }
-    });
-
-    // Modal de inicio de sesión
-    const login = document.getElementById('login');
-    document.querySelectorAll('[data-abrir-login]').forEach(b => b.addEventListener('click', () => login.showModal()));
-    document.querySelectorAll('[data-cerrar-login]').forEach(b => b.addEventListener('click', () => login.close()));
-    login.addEventListener('click', e => { if (e.target === login) login.close(); });
-    // Registro de donante
-    const registro = document.getElementById('registro');
-    document.getElementById('abrir-registro').addEventListener('click', e => { e.preventDefault(); login.close(); registro.showModal(); });
-    document.querySelectorAll('[data-cerrar-registro]').forEach(b => b.addEventListener('click', () => registro.close()));
-    registro.addEventListener('click', e => { if (e.target === registro) registro.close(); });
-    const p1 = document.getElementById('r-pass'), p2 = document.getElementById('r-pass2');
-    const validar = () => p2.setCustomValidity(p1.value === p2.value ? '' : 'Las contraseñas no coinciden');
-    p1.addEventListener('input', validar); p2.addEventListener('input', validar);
-  </script>
+  <script src="index.js"></script>
 </body>
 </html>

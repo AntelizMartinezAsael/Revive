@@ -309,3 +309,15 @@
 .check input { width: 1.2rem; height: 1.2rem; flex: none; padding: 0; }
 .dato { margin: 0 0 .5rem; }
 #ver-cuerpo { margin-bottom: 1rem; }
+
+/* ===== Donaciones con varios centros ===== */
+.badge { font-family: var(--f-h4); font-size: .85rem; border: 1.5px solid var(--negro); border-radius: 999px; padding: .1rem .8rem; background: var(--rosa); white-space: nowrap; }
+.badge.listo { background: var(--azul-300); }
+.badge.ok { background: var(--azul-500); }
+.art small { flex-basis: 100%; color: #3b4a5a; }
+.entrega { background: var(--azul-100); margin-bottom: 1rem; }
+.entrega .meta { margin: .2rem 0 .6rem; color: #3b4a5a; }
+.entrega .btn { margin-top: .8rem; }
+.lbl { font-family: var(--f-h3); font-size: 1.1rem; font-weight: 600; margin: 0 0 .3rem; }
+#d-info { margin: .6rem 0 0; font-size: .95rem; }
+#centros-lista .necesita { margin: .5rem 0 1rem; }
