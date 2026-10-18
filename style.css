@@ -272,3 +272,40 @@
     .lateral nav { flex-direction: row; flex-wrap: wrap; margin-top: 0; }
     .lateral nav a { border-top: 0; margin-top: 0; border-radius: 12px; }
   }
+
+  /* ===== Extras del panel de donante ===== */
+.resumen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+.stat { background: var(--blanco); padding: 1.1rem 1.3rem; }
+.stat strong { display: block; font-family: var(--f-h2); font-size: 2rem; line-height: 1.1; }
+.aviso { background: var(--rosa); border: 2px solid var(--negro); border-radius: 12px; padding: .8rem 1.1rem; margin: 1rem 0 0; max-width: none; }
+.aviso[hidden], .gracias[hidden] { display: none; }
+@media (max-width: 700px) { .resumen { grid-template-columns: 1fr; } }
+
+.buscar { margin-bottom: 1rem; }
+.art select.estado { width: auto; flex: 1; max-width: 190px; padding: .25rem .5rem; font-size: .9rem; border-width: 1.5px; border-radius: 999px; }
+.panel h3 { margin-top: 1.5rem; }
+.panel .form-grid { margin-top: 1rem; }
+
+.info-centro { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 1rem 0; align-items: start; }
+@media (max-width: 800px) { .info-centro { grid-template-columns: 1fr; } }
+.necesita { list-style: none; padding: 0; margin: 0; }
+.necesita li { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--azul-300); }
+.necesita b { font-family: var(--f-h4); font-weight: 400; font-size: .9rem; background: var(--azul-300); border: 1.5px solid var(--negro); border-radius: 999px; padding: .1rem .8rem; }
+.necesita li:first-child b { background: var(--rosa); }
+
+.logros { display: flex; flex-wrap: wrap; gap: .6rem; }
+.logro { font-family: var(--f-h3); font-weight: 600; border: 2px dashed var(--negro); border-radius: 999px; padding: .4rem 1rem; background: var(--blanco); color: #3b4a5a; }
+.logro.on { border-style: solid; background: var(--azul-300); color: var(--negro); }
+
+.gracias { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--negro); color: var(--blanco); font-family: var(--f-h4); padding: .8rem 1.6rem; border-radius: 999px; border: 2px solid var(--azul-300); z-index: 100; max-width: none; }
+
+/* ===== Inventario por módulos (v2) ===== */
+.modulos { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.botones { display: flex; flex-wrap: wrap; gap: .6rem; }
+.art { flex-wrap: wrap; }
+.art-nom { flex-basis: 100%; font-weight: 700; }
+.acciones { display: flex; gap: .4rem; }
+.check { display: flex; align-items: center; gap: .6rem; font-weight: 400; font-size: 1rem; padding: .5rem 0; border-top: 1px solid var(--azul-300); }
+.check input { width: 1.2rem; height: 1.2rem; flex: none; padding: 0; }
+.dato { margin: 0 0 .5rem; }
+#ver-cuerpo { margin-bottom: 1rem; }

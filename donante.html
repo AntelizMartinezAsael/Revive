@@ -31,19 +31,33 @@
     <h1>Hola, <span id="h-nombre">[Nombre]</span></h1>
     <p class="relleno">[Mensaje de bienvenida o frase motivadora para el donante.]</p>
 
+    <!-- Resumen de impacto personal -->
+    <div class="resumen">
+      <div class="tarjeta stat"><strong id="s-don">0</strong>artículos donados este año</div>
+      <div class="tarjeta stat"><strong id="s-pen">0</strong>artículos por entregar</div>
+      <div class="tarjeta stat"><strong id="s-cita">—</strong>próxima entrega</div>
+    </div>
+    <p class="aviso" id="aviso" hidden></p>
+
     <div class="tabs" role="tablist">
       <button role="tab" class="activo" data-tab="p-inv">Inventario</button>
       <button role="tab" data-tab="p-don">Tus donaciones</button>
-      <button role="tab" data-tab="p-rach">Rachas</button>
-      <button role="tab" data-tab="p-anual">Tabla de donaciones anuales</button>
+      <button role="tab" data-tab="p-cita">Agendar entrega</button>
+      <button role="tab" data-tab="p-centro">Centro de acopio</button>
+      <button role="tab" data-tab="p-rach">Rachas y logros</button>
+      <button role="tab" data-tab="p-anual">Donaciones anuales</button>
     </div>
 
     <!-- Inventario -->
     <div class="panel" id="p-inv">
       <div class="panel-cab">
         <h2>Inventario</h2>
-        <button class="btn azul" data-dlg="d-art">Agregar artículo</button>
+        <div class="botones">
+          <button class="btn" id="b-donar">Donar</button>
+          <button class="btn azul" data-dlg="d-art">Agregar artículo</button>
+        </div>
       </div>
+      <input type="search" id="buscar" class="buscar" placeholder="Buscar en mi inventario…" aria-label="Buscar en mi inventario">
       <p class="vacio" id="inv-vacio">Aún no tienes artículos. Usa “Agregar artículo” para empezar tu inventario.</p>
       <div class="modulos" id="inv-lista"></div>
     </div>
@@ -51,17 +65,57 @@
     <!-- Tus donaciones -->
     <div class="panel" id="p-don" hidden>
       <h2>Tus donaciones</h2>
-      <p class="vacio">[Aquí aparecerá el historial de artículos que ya donaste.]</p>
+      <p class="vacio" id="don-vacio">Cuando marques un artículo como “Entregado”, aparecerá aquí.</p>
+      <div id="don-lista"></div>
     </div>
 
-    <!-- Rachas -->
+    <!-- Agendar entrega -->
+    <div class="panel" id="p-cita" hidden>
+      <h2>Agendar una cita de entrega</h2>
+      <p class="relleno">[Explica cómo funcionan las citas: tolerancia, qué llevar, etc.]</p>
+      <form id="f-cita" class="form-grid">
+        <div class="campo"><label for="c-fecha">Fecha</label><input id="c-fecha" type="date" required></div>
+        <div class="campo"><label for="c-hora">Hora</label>
+          <select id="c-hora"><option>[09:00]</option><option>[10:00]</option><option>[11:00]</option><option>[12:00]</option><option>[16:00]</option></select></div>
+        <div class="campo completo"><label for="c-nota">Qué vas a entregar (opcional)</label><input id="c-nota" placeholder="Ej. 2 bolsas de ropa y una caja de alimentos"></div>
+        <button class="btn completo" type="submit">Agendar cita</button>
+      </form>
+      <h3>Mis citas</h3>
+      <p class="vacio" id="cita-vacio">No tienes citas agendadas.</p>
+      <div id="cita-lista"></div>
+    </div>
+
+    <!-- Centro de acopio -->
+    <div class="panel" id="p-centro" hidden>
+      <h2>Centro de acopio</h2>
+      <div class="info-centro">
+        <div class="tarjeta">
+          <h3>[Nombre del centro]</h3>
+          <p><strong>Dirección:</strong> [Calle, número, colonia, ciudad]</p>
+          <p><strong>Horario:</strong> [Días y horas de recepción]</p>
+          <p><strong>Teléfono:</strong> [+52 00 0000 0000]</p>
+          <a class="btn claro" href="#" target="_blank" rel="noopener">Cómo llegar</a>
+        </div>
+        <div class="espacio-imagen" role="img" aria-label="Espacio para mapa">[Mapa del centro]</div>
+      </div>
+      <h3>Lo que necesitamos ahora</h3>
+      <ul class="necesita">
+        <li><span>[Artículo urgente 1]</span><b>Urgente</b></li>
+        <li><span>[Artículo 2]</span><b>Se necesita</b></li>
+        <li><span>[Artículo 3]</span><b>Se necesita</b></li>
+      </ul>
+    </div>
+
+    <!-- Rachas y logros -->
     <div class="panel" id="p-rach" hidden>
-      <h2>Rachas</h2>
+      <h2>Rachas y logros</h2>
       <div class="tarjeta racha">
-        <strong>0</strong><span>semanas seguidas donando</span>
+        <strong id="racha-n">0</strong><span>semanas seguidas donando</span>
         <div class="dias" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
       <p class="relleno">[Explica cómo se gana y se mantiene una racha.]</p>
+      <h3>Logros</h3>
+      <div class="logros" id="logros"></div>
     </div>
 
     <!-- Tabla anual -->
@@ -73,23 +127,44 @@
     </div>
   </main>
 
+  <p class="gracias" id="gracias" role="status" hidden>¡Gracias por donar! 💙</p>
+
   <!-- ============ VENTANAS ============ -->
-  <dialog id="d-art">
-    <div class="modal-cab"><h3>Agregar artículo</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
-    <form class="modal-cuerpo" id="f-art">
-      <div class="campo"><label for="a-nom">Nombre del artículo</label><input id="a-nom" required></div>
-      <div class="campo"><label for="a-cat">Módulo</label>
-        <select id="a-cat"><option>Ropa</option><option>Alimentos</option><option>Útiles escolares</option><option>Higiene</option><option>Juguetes</option><option>Otros</option></select></div>
+  <dialog id="d-art" class="ancho">
+    <div class="modal-cab"><h3 id="t-art">Agregar artículo</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
+    <form class="modal-cuerpo form-grid" id="f-art">
+      <div class="campo"><label for="a-cat">Módulo</label><select id="a-cat"></select></div>
+      <div class="campo"><label for="a-tipo">Tipo de artículo</label><select id="a-tipo"></select></div>
+      <div class="campo completo" id="w-otro" hidden><label for="a-otro">¿Cuál artículo?</label><input id="a-otro"></div>
       <div class="campo"><label for="a-cant">Cantidad</label><input id="a-cant" type="number" min="1" value="1" required></div>
-      <button class="btn" type="submit" style="width:100%">Guardar artículo</button>
+      <div class="campo"><label for="a-cond">Condición</label><select id="a-cond"><option>Nuevo</option><option>Buen estado</option><option>Usado</option></select></div>
+      <div class="campo completo" id="w-cad" hidden><label for="a-cad">Fecha de caducidad</label><input id="a-cad" type="date"></div>
+      <div class="campo completo"><label for="a-nota">Notas (talla, marca, edad…)</label><textarea id="a-nota" style="min-height:80px"></textarea></div>
+      <button class="btn completo" type="submit">Guardar artículo</button>
     </form>
   </dialog>
 
+  <dialog id="d-ver">
+  <div class="modal-cab"><h3>Información del artículo</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
+  <div class="modal-cuerpo">
+    <div id="ver-cuerpo"></div>
+    <div class="botones"><button class="btn claro" id="ver-edit">Editar</button><button class="btn claro" id="ver-del">Eliminar</button></div>
+  </div>
+</dialog>
+
+<dialog id="d-donar">
+  <div class="modal-cab"><h3>Donar artículos</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
+  <form class="modal-cuerpo" id="f-donar">
+    <p class="relleno">Selecciona los artículos de tu inventario que quieres donar.</p>
+    <p class="vacio" id="donar-vacio">No tienes artículos pendientes. Agrega uno primero.</p>
+    <div id="donar-lista"></div>
+    <button class="btn" id="donar-ok" type="submit" style="width:100%;margin-top:1rem">Continuar y agendar entrega</button>
+  </form>
+</dialog>
+  
   <dialog id="d-perfil">
     <div class="modal-cab"><h3>Perfil</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
-    <div class="modal-cuerpo">
-      <p class="relleno">[Aquí se mostrarán y podrán editar: nombre, apellidos, fecha de nacimiento, correo, ubicación, teléfono, foto y contraseña.]</p>
-    </div>
+    <div class="modal-cuerpo"><p class="relleno">[Aquí se mostrarán y podrán editar: nombre, apellidos, fecha de nacimiento, correo, ubicación, teléfono, foto y contraseña.]</p></div>
   </dialog>
 
   <dialog id="d-reco">
@@ -103,51 +178,199 @@
   </dialog>
 
   <script>
-    // Ventanas
-    document.querySelectorAll('[data-dlg]').forEach(b => b.onclick = () => document.getElementById(b.dataset.dlg).showModal());
-    document.querySelectorAll('dialog').forEach(d => {
-      d.addEventListener('click', e => { if (e.target === d || e.target.hasAttribute('data-cerrar')) d.close(); });
-    });
-    document.querySelectorAll('#d-reco form, #d-error form').forEach(f => f.onsubmit = e => { e.preventDefault(); f.reset(); f.closest('dialog').close(); });
+    const $ = id => document.getElementById(id);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
 
-    // Pestañas
-    const tabs = document.querySelectorAll('[data-tab]');
-    tabs.forEach(t => t.onclick = () => {
-      tabs.forEach(x => x.classList.toggle('activo', x === t));
-      document.querySelectorAll('.panel').forEach(p => p.hidden = p.id !== t.dataset.tab);
-    });
+// Catálogo de módulos y tipos de artículo (sepáralos con |)
+const catalogo = {
+  'Ropa': 'Camiseta|Camisa|Blusa|Top|Sudadera|Jersey|Chaqueta|Abrigo|Chaleco|Cazadora|Pantalón|Vaqueros|Shorts|Falda|Vestido|Mono|Peto|Mallas|Pijama|Ropa interior|Traje de baño|Calcetines',
+  'Calzado': 'Zapatillas deportivas|Zapatos de vestir / Formales|Botas|Botines|Sandalias / Chanclas|Bailarinas / Manoletinas|Mocasines|Calzado infantil / Bebé|Zapatillas de estar por casa|Botas de agua / Trabajo',
+  'Útiles escolares': 'Cuadernos / Libretas|Lápices / Portaminas|Bolígrafos / Plumas|Colores / Rotuladores|Marcadores|Reglas / Escuadras / Transportador|Estuches / Cartucheras|Mochilas / Correajes|Tijeras|Pegamento|Sacapuntas|Gomas de borrar|Calculadoras',
+  'Artículos para bebé': 'Pañales|Toallitas húmedas|Biberones|Chupetes|Baberos|Cunas / Cunas de viaje|Cochecitos / Sillas de paseo|Porteadores / Mochilas portabebés|Bañeras / Artículos de baño infantil|Mantas / Sacos de dormir|Mordedores / Sonajeros',
+  'Productos de higiene personal': 'Jabón de cuerpo / Gel de ducha|Champú / Acondicionador|Pasta de dientes / Cepillo dental|Desodorante|Crema hidratante / Corporal|Cuidado facial|Productos de afeitado / Depilación|Higiene femenina|Cortaúñas / Limas|Peines / Cepillos para cabello',
+  'Productos de limpieza': 'Detergente para ropa|Suavizante|Lavavajillas / Detergente para platos|Limpiahogares / Multiusos|Desinfectante / Lejía / Cloro|Limpiacristales|Estropajos / Esponjas / Bayetas|Escobas / Fregonas / Mopas|Bolsas de basura|Quitaagrasas / Desengrasante',
+  'Alimentos': 'Arroz / Legumbres|Pasta|Aceite / Vinagre / Condimentos|Enlatados / Conservas|Harinas / Cereales|Leche / Lácteos|Galletas / Snacks|Azúcar / Sal / Café|Bebidas / Zumos|Comida no perecedera',
+  'Juguetes': 'Muñecos / Figuras de acción|Juegos de mesa / Puzles / Rompecabezas|Peluches|Bloques de construcción|Vehículos / Coches / Trenes|Juguetes educativos / Didácticos|Manualidades / Plastilina|Pelotas / Artículos deportivos infantiles|Disfraces|Instrumentos musicales de juguete',
+  'Otros': 'Cobijas / Cobertores|Libros|Utensilios de cocina'
+};
+const OTRO = 'Otro (escribir)';
+const cats = Object.keys(catalogo);
+const estados = ['Pendiente', 'Listo para entregar', 'Entregado'];
+const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const items = [], citas = [];   // en memoria: conecta aquí tu base de datos
+let editando = null;
+const semana = d => Math.floor(d / 6048e5);
+const fmt = d => new Date(d + 'T00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long' });
 
-    // Inventario por módulos (en memoria: conecta aquí tu base de datos)
-    const cats = ['Ropa', 'Alimentos', 'Útiles escolares', 'Higiene', 'Juguetes', 'Otros'];
-    const items = [];
-    function pintar() {
-      const cont = document.getElementById('inv-lista');
-      cont.replaceChildren();
-      cats.forEach(c => {
-        const f = items.filter(i => i.cat === c);
-        if (!f.length) return;
-        const m = document.createElement('article'); m.className = 'tarjeta modulo';
-        const h = document.createElement('h3'); h.textContent = c; m.append(h);
-        f.forEach(i => {
-          const r = document.createElement('div'); r.className = 'art';
-          const n = document.createElement('span'); n.textContent = i.nom + ' × ' + i.cant;
-          const x = document.createElement('button'); x.textContent = 'Quitar'; x.onclick = () => { items.splice(items.indexOf(i), 1); pintar(); };
-          r.append(n, x); m.append(r);
-        });
-        cont.append(m);
+// Ventanas y pestañas
+document.querySelectorAll('[data-dlg]').forEach(b => b.onclick = () => $(b.dataset.dlg).showModal());
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d || e.target.hasAttribute('data-cerrar')) d.close(); }));
+document.querySelectorAll('#d-reco form, #d-error form').forEach(f => f.onsubmit = e => { e.preventDefault(); f.reset(); f.closest('dialog').close(); });
+const tabs = document.querySelectorAll('[data-tab]');
+tabs.forEach(t => t.onclick = () => {
+  tabs.forEach(x => x.classList.toggle('activo', x === t));
+  document.querySelectorAll('.panel').forEach(p => p.hidden = p.id !== t.dataset.tab);
+});
+
+function gracias() { const g = $('gracias'); g.hidden = false; setTimeout(() => g.hidden = true, 3000); }
+
+// ----- Formulario de artículo (agregar / editar) -----
+function llenarTipos(cat) {
+  const t = $('a-tipo'); t.replaceChildren();
+  catalogo[cat].split('|').concat(OTRO).forEach(x => t.append(new Option(x)));
+}
+function ajustar() {
+  $('w-otro').hidden = $('a-tipo').value !== OTRO;
+  $('a-otro').required = !$('w-otro').hidden;
+  $('w-cad').hidden = $('a-cat').value !== 'Alimentos';
+}
+cats.forEach(c => $('a-cat').append(new Option(c)));
+llenarTipos(cats[0]); ajustar();
+$('a-cat').onchange = () => { llenarTipos($('a-cat').value); ajustar(); };
+$('a-tipo').onchange = ajustar;
+$('d-art').addEventListener('close', () => {
+  editando = null; $('f-art').reset(); $('t-art').textContent = 'Agregar artículo';
+  llenarTipos($('a-cat').value); ajustar();
+});
+$('f-art').onsubmit = e => {
+  e.preventDefault();
+  const tipo = $('a-tipo').value;
+  const d = {
+    cat: $('a-cat').value, tipo, nom: tipo === OTRO ? $('a-otro').value.trim() : tipo,
+    cant: $('a-cant').value, cond: $('a-cond').value,
+    cad: $('w-cad').hidden ? '' : $('a-cad').value, nota: $('a-nota').value.trim()
+  };
+  if (editando) Object.assign(editando, d); else items.push({ ...d, estado: 'Pendiente', alta: Date.now() });
+  $('d-art').close(); render();
+};
+
+// ----- Ver información, editar, eliminar -----
+function ver(i) {
+  const f = $('ver-cuerpo'); f.replaceChildren();
+  [['Artículo', i.nom], ['Módulo', i.cat], ['Cantidad', i.cant], ['Condición', i.cond], ['Estado', i.estado],
+   i.cad && ['Caducidad', new Date(i.cad + 'T00:00').toLocaleDateString('es-MX')],
+   ['Agregado', new Date(i.alta).toLocaleDateString('es-MX')], i.nota && ['Notas', i.nota]]
+    .filter(Boolean).forEach(([k, v]) => { const r = el('p', 'dato'); r.append(el('strong', '', k + ': '), document.createTextNode(v)); f.append(r); });
+  $('ver-edit').onclick = () => { $('d-ver').close(); editar(i); };
+  $('ver-del').onclick = () => { $('d-ver').close(); eliminar(i); };
+  $('d-ver').showModal();
+}
+function editar(i) {
+  editando = i; $('t-art').textContent = 'Editar artículo';
+  $('a-cat').value = i.cat; llenarTipos(i.cat); $('a-tipo').value = i.tipo;
+  $('a-otro').value = i.tipo === OTRO ? i.nom : '';
+  $('a-cant').value = i.cant; $('a-cond').value = i.cond; $('a-cad').value = i.cad; $('a-nota').value = i.nota;
+  ajustar(); $('d-art').showModal();
+}
+function eliminar(i) {
+  if (confirm('¿Eliminar "' + i.nom + '" de tu inventario?')) { items.splice(items.indexOf(i), 1); render(); }
+}
+
+// ----- Donar: seleccionar artículos del inventario -----
+$('b-donar').onclick = () => {
+  const l = $('donar-lista'); l.replaceChildren();
+  const pend = items.filter(i => i.estado === 'Pendiente');
+  pend.forEach(i => {
+    const lb = el('label', 'check'), c = document.createElement('input');
+    c.type = 'checkbox'; c.value = items.indexOf(i);
+    lb.append(c, document.createTextNode(i.nom + ' × ' + i.cant + ' (' + i.cat + ')')); l.append(lb);
+  });
+  $('donar-vacio').hidden = pend.length > 0;
+  $('donar-ok').hidden = !pend.length;
+  $('d-donar').showModal();
+};
+$('f-donar').onsubmit = e => {
+  e.preventDefault();
+  const sel = [...$('donar-lista').querySelectorAll('input:checked')].map(c => items[c.value]);
+  if (!sel.length) return;
+  sel.forEach(i => i.estado = 'Listo para entregar');
+  $('c-nota').value = sel.map(i => i.nom + ' × ' + i.cant).join(', ');
+  $('d-donar').close(); render();
+  document.querySelector('[data-tab="p-cita"]').click();
+};
+
+function render() {
+  const anio = new Date().getFullYear();
+  const entregados = items.filter(i => i.estado === 'Entregado');
+  const activos = items.filter(i => i.estado !== 'Entregado');
+  const listos = activos.filter(i => i.estado === 'Listo para entregar');
+
+  // Inventario por módulos (con búsqueda)
+  const q = $('buscar').value.trim().toLowerCase(), cont = $('inv-lista');
+  cont.replaceChildren();
+  cats.forEach(c => {
+    const f = activos.filter(i => i.cat === c && (i.nom + ' ' + i.cat).toLowerCase().includes(q));
+    if (!f.length) return;
+    const m = el('article', 'tarjeta modulo'); m.append(el('h3', '', c));
+    f.forEach(i => {
+      const r = el('div', 'art'), n = el('span', 'art-nom', i.nom + ' × ' + i.cant);
+      const s = el('select', 'estado'); s.setAttribute('aria-label', 'Estado de ' + i.nom);
+      estados.forEach(e => { const o = el('option', '', e); o.selected = e === i.estado; s.append(o); });
+      s.onchange = () => { i.estado = s.value; if (s.value === 'Entregado') { i.fecha = Date.now(); gracias(); } render(); };
+      const b = el('div', 'acciones');
+      [['Ver', () => ver(i)], ['Editar', () => editar(i)], ['Eliminar', () => eliminar(i)]].forEach(([t, fn]) => {
+        const x = el('button', '', t); x.onclick = fn; b.append(x);
       });
-      document.getElementById('inv-vacio').hidden = items.length > 0;
-    }
-    document.getElementById('f-art').onsubmit = e => {
-      e.preventDefault();
-      items.push({ nom: document.getElementById('a-nom').value.trim(), cat: document.getElementById('a-cat').value, cant: document.getElementById('a-cant').value });
-      e.target.reset(); document.getElementById('d-art').close(); pintar();
-    };
+      r.append(n, s, b); m.append(r);
+    });
+    cont.append(m);
+  });
+  $('inv-vacio').hidden = activos.length > 0;
 
-    // Tabla anual
-    document.getElementById('anio').textContent = new Date().getFullYear();
-    document.getElementById('anual').innerHTML = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
-      .map(m => `<tr><td>${m}</td><td>0</td></tr>`).join('');
+  // Tus donaciones
+  const dl = $('don-lista'); dl.replaceChildren();
+  entregados.forEach(i => dl.append(el('div', 'art', i.nom + ' × ' + i.cant + ' · ' + i.cat + ' · ' + new Date(i.fecha).toLocaleDateString('es-MX'))));
+  $('don-vacio').hidden = entregados.length > 0;
+
+  // Citas
+  const cl = $('cita-lista'); cl.replaceChildren();
+  citas.sort((a, b) => a.fecha.localeCompare(b.fecha)).forEach(c => {
+    const r = el('div', 'art'), x = el('button', '', 'Cancelar');
+    x.onclick = () => { citas.splice(citas.indexOf(c), 1); render(); };
+    r.append(el('span', '', fmt(c.fecha) + ' · ' + c.hora + (c.nota ? ' · ' + c.nota : '')), x); cl.append(r);
+  });
+  $('cita-vacio').hidden = citas.length > 0;
+
+  // Resumen y recordatorio
+  const delAnio = entregados.filter(i => new Date(i.fecha).getFullYear() === anio);
+  $('s-don').textContent = delAnio.reduce((t, i) => t + Number(i.cant), 0);
+  $('s-pen').textContent = activos.reduce((t, i) => t + Number(i.cant), 0);
+  $('s-cita').textContent = citas.length ? fmt(citas[0].fecha) : '—';
+  const av = $('aviso');
+  av.hidden = !listos.length;
+  av.textContent = listos.length ? 'Tienes ' + listos.length + ' artículo(s) listos para entregar. ' + (citas.length ? '' : '¡Agenda una cita!') : '';
+
+  // Racha (semanas seguidas con al menos una entrega)
+  const sem = new Set(entregados.map(i => semana(i.fecha)));
+  let w = semana(Date.now()); if (!sem.has(w)) w--;
+  let racha = 0; while (sem.has(w)) { racha++; w--; }
+  $('racha-n').textContent = racha;
+  document.querySelectorAll('.dias i').forEach((d, k) => d.style.background = k < racha ? 'var(--azul-500)' : '');
+
+  // Logros
+  const logros = [
+    ['Primera donación', entregados.length >= 1], ['5 artículos donados', entregados.length >= 5],
+    ['Racha de 4 semanas', racha >= 4], ['Primera cita agendada', citas.length >= 1]
+  ];
+  const lg = $('logros'); lg.replaceChildren();
+  logros.forEach(([t, ok]) => lg.append(el('span', 'logro' + (ok ? ' on' : ''), (ok ? '★ ' : '☆ ') + t)));
+
+  // Tabla anual
+  $('anual').replaceChildren(...meses.map((m, k) => {
+    const tr = el('tr'), n = delAnio.filter(i => new Date(i.fecha).getMonth() === k).reduce((t, i) => t + Number(i.cant), 0);
+    tr.append(el('td', '', m), el('td', '', n)); return tr;
+  }));
+}
+
+$('buscar').oninput = render;
+$('c-fecha').min = new Date().toISOString().slice(0, 10);
+$('f-cita').onsubmit = e => {
+  e.preventDefault();
+  citas.push({ fecha: $('c-fecha').value, hora: $('c-hora').value, nota: $('c-nota').value.trim() });
+  e.target.reset(); render();
+};
+$('anio').textContent = new Date().getFullYear();
+render();
   </script>
 </body>
 </html>
