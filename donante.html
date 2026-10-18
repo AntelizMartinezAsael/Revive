@@ -42,6 +42,7 @@
     <div class="tabs" role="tablist">
       <button role="tab" class="activo" data-tab="p-inv">Inventario</button>
       <button role="tab" data-tab="p-don">Tus donaciones</button>
+      <button role="tab" data-tab="p-impacto" id="tab-impacto">Así se usó tu donación</button>
       <button role="tab" data-tab="p-centro">Centros de acopio</button>
       <button role="tab" data-tab="p-rach">Rachas y logros</button>
       <button role="tab" data-tab="p-anual">Donaciones anuales</button>
@@ -64,9 +65,23 @@
     <!-- Tus donaciones -->
     <div class="panel" id="p-don" hidden>
       <h2>Tus donaciones</h2>
-      <p class="relleno">El centro de acopio es quien confirma cuándo tu artículo está listo para entregar y cuándo lo recibe.</p>
-      <p class="vacio" id="don-vacio">Aún no tienes donaciones. Ve a Inventario y pulsa “Donar”.</p>
+      <p class="relleno">El centro de acopio es quien confirma cuándo recibe tus artículos o tu transferencia.</p>
+    
+      <h3>Artículos</h3>
+      <p class="vacio" id="don-vacio">Aún no tienes donaciones de artículos. Ve a Inventario y pulsa “Donar”.</p>
       <div id="don-lista"></div>
+    
+      <div class="panel-cab"><h3>Dinero</h3><button class="btn azul" id="b-dinero">Donar dinero</button></div>
+      <p class="relleno">Total confirmado este año: <strong id="din-total">$0.00</strong></p>
+      <p class="vacio" id="din-vacio">Aún no has registrado donaciones en dinero.</p>
+      <div id="din-lista"></div>
+    </div>
+
+    <div class="panel" id="p-impacto" hidden>
+      <h2>Así se usó tu donación</h2>
+      <p class="relleno">Los centros de acopio comparten aquí cómo ayudó lo que donaste. Las fotos se publican con autorización de las personas o de sus tutores.</p>
+      <p class="vacio" id="imp-vacio">Cuando un centro comparta una foto o un mensaje sobre tu donación, aparecerá aquí.</p>
+      <div class="grid g2" id="imp-lista"></div>
     </div>
 
     <!-- Centro de acopio -->
@@ -142,10 +157,73 @@
   </form>
 </dialog>
   
-  <dialog id="d-perfil">
-    <div class="modal-cab"><h3>Perfil</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
-    <div class="modal-cuerpo"><p class="relleno">[Aquí se mostrarán y podrán editar: nombre, apellidos, fecha de nacimiento, correo, ubicación, teléfono, foto y contraseña.]</p></div>
-  </dialog>
+<dialog id="d-dinero" class="ancho">
+  <div class="modal-cab"><h3>Donar dinero por transferencia</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
+  <form class="modal-cuerpo form-grid" id="f-dinero">
+    <div class="campo completo"><label for="m-centro">Centro de acopio</label><select id="m-centro" required></select></div>
+    <div class="completo datos-banco" id="m-banco"></div>
+    <div class="campo"><label for="m-monto">Monto transferido (MXN)</label><input id="m-monto" type="number" min="1" step="0.01" required></div>
+    <div class="campo"><label for="m-fecha">Fecha de la transferencia</label><input id="m-fecha" type="date" required></div>
+    <div class="campo"><label for="m-rastreo">Clave de rastreo (opcional)</label><input id="m-rastreo"></div>
+    <div class="campo"><label for="m-comp">Comprobante (opcional)</label><input id="m-comp" type="file" accept="image/*,application/pdf"></div>
+    <p class="relleno completo">Haz la transferencia desde tu banco con los datos de arriba y escribe la referencia como concepto. Después registra aquí tu donación; el centro la confirmará cuando la reciba.</p>
+    <button class="btn completo" type="submit">Ya hice mi transferencia</button>
+  </form>
+</dialog>
+
+<dialog id="d-perfil" class="ancho" aria-labelledby="t-perfil">
+  <div class="modal-cab"><h3 id="t-perfil">Mi perfil</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>
+  <div class="modal-cuerpo">
+
+    <!-- Foto -->
+    <div class="pf-cab">
+      <div class="pf-foto" id="pf-foto" role="img" aria-label="Foto de perfil">DN</div>
+      <div class="pf-acc">
+        <label class="btn claro" for="pf-archivo">Cambiar foto</label>
+        <input type="file" id="pf-archivo" accept="image/*" hidden>
+        <button type="button" class="btn claro" id="pf-quitar">Quitar foto</button>
+        <small>Formato JPG o PNG.</small>
+      </div>
+    </div>
+
+    <!-- Datos personales -->
+    <form id="f-perfil" class="form-grid">
+      <div class="campo"><label for="p-nombre">Nombre(s)</label><input id="p-nombre" required></div>
+      <div class="campo"><label for="p-ap">Apellido paterno</label><input id="p-ap" required></div>
+      <div class="campo"><label for="p-am">Apellido materno</label><input id="p-am" required></div>
+      <div class="campo"><label for="p-fecha">Fecha de nacimiento</label><input id="p-fecha" type="date" required></div>
+      <div class="campo completo">
+        <label for="p-correo">Correo electrónico</label>
+        <input id="p-correo" type="email" readonly>
+        <small class="pf-nota">El correo identifica tu cuenta. Si necesitas cambiarlo, contáctanos.</small>
+      </div>
+      <div class="campo"><label for="p-ubic">Ubicación</label><input id="p-ubic" required></div>
+      <div class="campo"><label for="p-tel">Teléfono (opcional)</label><input id="p-tel" type="tel"></div>
+      <div class="pf-botones">
+        <button class="btn" type="submit">Guardar cambios</button>
+        <button class="btn claro" type="button" id="pf-cancelar">Cancelar</button>
+      </div>
+    </form>
+
+    <!-- Cambiar contraseña -->
+    <details class="pf-sec">
+      <summary>Cambiar contraseña</summary>
+      <form id="f-pass" class="form-grid">
+        <div class="campo completo"><label for="pw-act">Contraseña actual</label><input id="pw-act" type="password" autocomplete="current-password" required></div>
+        <div class="campo"><label for="pw-new">Nueva contraseña</label><input id="pw-new" type="password" autocomplete="new-password" minlength="8" required></div>
+        <div class="campo"><label for="pw-new2">Confirmar nueva contraseña</label><input id="pw-new2" type="password" autocomplete="new-password" required></div>
+        <button class="btn completo" type="submit">Actualizar contraseña</button>
+      </form>
+    </details>
+
+    <!-- Eliminar cuenta -->
+    <div class="pf-peligro">
+      <h4>Eliminar cuenta</h4>
+      <p>Se borrarán tu perfil, tu inventario y tu historial de donaciones. Esta acción no se puede deshacer.</p>
+      <button type="button" class="btn claro" id="pf-eliminar">Eliminar mi cuenta</button>
+    </div>
+  </div>
+</dialog>
 
   <dialog id="d-reco">
     <div class="modal-cab"><h3>Enviar recomendación</h3><button type="button" data-cerrar aria-label="Cerrar">&times;</button></div>

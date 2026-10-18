@@ -20,16 +20,17 @@ const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
 
 // ===== Centros de acopio (cámbialos por los reales o tráelos de la base de datos) =====
 const centros = [
-  { id: 'c1', nombre: '[Centro de acopio 1]', dir: '[Dirección]', horario: '[Horario de recepción]', tel: '[Teléfono]', necesita: ['[Artículo urgente]', '[Artículo 2]'] },
-  { id: 'c2', nombre: '[Centro de acopio 2]', dir: '[Dirección]', horario: '[Horario de recepción]', tel: '[Teléfono]', necesita: ['[Artículo 1]', '[Artículo 2]'] },
-  { id: 'c3', nombre: '[Centro de acopio 3]', dir: '[Dirección]', horario: '[Horario de recepción]', tel: '[Teléfono]', necesita: ['[Artículo 1]', '[Artículo 2]'] }
+  { id: 'c1', nombre: '[Centro de acopio 1]', dir: '[Dirección]', horario: '[Horario de recepción]', tel: '[Teléfono]', banco: '[Banco]', titular: '[Nombre del titular]', clabe: '[CLABE de 18 dígitos]', necesita: ['[Artículo urgente]', '[Artículo 2]'] },
+  { id: 'c2', nombre: '[Centro de acopio 2]', dir: '[Dirección]', horario: '[Horario de recepción]', tel: '[Teléfono]', banco: '[Banco]', titular: '[Nombre del titular]', clabe: '[CLABE de 18 dígitos]', necesita: ['[Artículo 1]', '[Artículo 2]'] },
+  { id: 'c3', nombre: '[Centro de acopio 3]', dir: '[Dirección]', horario: '[Horario de recepción]', tel: '[Teléfono]', banco: '[Banco]', titular: '[Nombre del titular]', clabe: '[CLABE de 18 dígitos]', necesita: ['[Artículo 1]', '[Artículo 2]'] }
 ];
 
 // ===== Datos en memoria: aquí se conectará la base de datos =====
-const items = [], entregas = [];
-let editando = null, nid = 1;
+const items = [], entregas = [], dineros = [];
+let editando = null, nid = 1, refDinero = '';
 const semana = d => Math.floor(d / 6048e5);
 const fmt = d => new Date(d + 'T00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long' });
+const pesos = n => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n);
 
 // ===== Ventanas y pestañas =====
 document.querySelectorAll('[data-dlg]').forEach(b => b.onclick = () => $(b.dataset.dlg).showModal());
@@ -40,7 +41,7 @@ tabs.forEach(t => t.onclick = () => {
   tabs.forEach(x => x.classList.toggle('activo', x === t));
   document.querySelectorAll('.panel').forEach(p => p.hidden = p.id !== t.dataset.tab);
 });
-function gracias() { const g = $('gracias'); g.hidden = false; setTimeout(() => g.hidden = true, 3000); }
+function gracias(msg) { const g = $('gracias'); g.textContent = msg || '¡Gracias por donar! 💙'; g.hidden = false; setTimeout(() => g.hidden = true, 3000); }
 
 // ===== Formulario de artículo (agregar / editar) =====
 function llenarTipos(cat) {
@@ -96,7 +97,7 @@ function eliminar(i) {
   if (confirm('¿Eliminar "' + i.nom + '" de tu inventario?')) { items.splice(items.indexOf(i), 1); render(); }
 }
 
-// ===== Donar: centro + artículos + fecha y hora =====
+// ===== Donar artículos: centro + artículos + fecha y hora =====
 centros.forEach(c => $('d-centro').append(new Option(c.nombre, c.id)));
 function infoCentro() {
   const c = centros.find(x => x.id === $('d-centro').value);
@@ -128,14 +129,53 @@ $('f-donar').onsubmit = e => {
   document.querySelector('[data-tab="p-don"]').click();
 };
 
-// ===== SOLO PARA PRUEBAS: el centro de acopio cambiará el estado desde su panel =====
-// En la consola del navegador: centroActualiza(0, 'Listo para entregar')  o  centroActualiza(0, 'Entregado')
+// ===== Donar dinero (transferencia) =====
+centros.forEach(c => $('m-centro').append(new Option(c.nombre, c.id)));
+
+function copiar(txt, btn) {
+  const ok = () => { btn.textContent = '¡Copiado!'; setTimeout(() => btn.textContent = 'Copiar', 1500); };
+  (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(ok, () => prompt('Copia este dato:', txt));
+}
+function datosBanco() {
+  const c = centros.find(x => x.id === $('m-centro').value), b = $('m-banco'); b.replaceChildren();
+  [['Banco', c.banco], ['Titular', c.titular], ['CLABE', c.clabe], ['Concepto / referencia', refDinero]].forEach(([k, v], i) => {
+    const r = el('div', 'dato-banco'); r.append(el('span', '', k), el('strong', '', v));
+    if (i > 1) { const x = el('button', '', 'Copiar'); x.type = 'button'; x.onclick = () => copiar(v, x); r.append(x); }
+    b.append(r);
+  });
+}
+function abrirDinero(cid) {
+  refDinero = 'DON-' + String(dineros.length + 1).padStart(4, '0');
+  if (cid) $('m-centro').value = cid;
+  datosBanco(); $('d-dinero').showModal();
+}
+$('m-centro').onchange = datosBanco;
+$('m-fecha').max = new Date().toISOString().slice(0, 10);
+$('b-dinero').onclick = () => abrirDinero();
+$('d-dinero').addEventListener('close', () => $('f-dinero').reset());
+$('f-dinero').onsubmit = e => {
+  e.preventDefault();
+  const f = $('m-comp').files[0];
+  dineros.push({
+    centro: centros.find(c => c.id === $('m-centro').value), monto: Number($('m-monto').value),
+    fecha: $('m-fecha').value, ref: refDinero, rastreo: $('m-rastreo').value.trim(),
+    comp: f ? f.name : '', estado: 'Por confirmar'
+  });
+  $('d-dinero').close(); render();
+  document.querySelector('[data-tab="p-don"]').click();
+  gracias('Registramos tu transferencia. El centro la confirmará 💙');
+};
+
+// ===== SOLO PARA PRUEBAS: el centro de acopio actualizará esto desde su panel =====
+// Artículos, en la consola:  centroActualiza(0, 'Listo para entregar')  o  centroActualiza(0, 'Entregado')
 window.centroActualiza = (n, estado) => {
   const i = items[n]; if (!i) return;
   i.estado = estado;
   if (estado === 'Entregado') { i.fecha = Date.now(); gracias(); }
   render();
 };
+// Dinero, en la consola:  centroConfirmaDinero(0, 'Confirmada')  o  centroConfirmaDinero(0, 'No encontrada')
+window.centroConfirmaDinero = (n, estado) => { if (dineros[n]) { dineros[n].estado = estado; render(); } };
 
 // ===== Tarjetas de centros (se dibujan una vez) =====
 centros.forEach(c => {
@@ -144,11 +184,13 @@ centros.forEach(c => {
   a.append(el('h4', '', 'Lo que necesitamos ahora'));
   const ul = el('ul', 'necesita');
   c.necesita.forEach(n => { const li = el('li'); li.append(el('span', '', n), el('b', '', 'Se necesita')); ul.append(li); });
-  const b = el('button', 'btn', 'Donar aquí'); b.onclick = () => abrirDonar(c.id);
-  a.append(ul, b); $('centros-lista').append(a);
+  const bb = el('div', 'botones');
+  const b1 = el('button', 'btn', 'Donar artículos'); b1.onclick = () => abrirDonar(c.id);
+  const b2 = el('button', 'btn azul', 'Donar dinero'); b2.onclick = () => abrirDinero(c.id);
+  bb.append(b1, b2); a.append(ul, bb); $('centros-lista').append(a);
 });
 
-const badge = e => el('span', 'badge' + (e === 'Entregado' ? ' ok' : e === 'Listo para entregar' ? ' listo' : ''), e);
+const badge = e => el('span', 'badge' + (e === 'Entregado' || e === 'Confirmada' ? ' ok' : e === 'Listo para entregar' ? ' listo' : ''), e);
 
 // ===== Dibujar todo =====
 function render() {
@@ -177,7 +219,7 @@ function render() {
   });
   $('inv-vacio').hidden = activos.length > 0;
 
-  // Tus donaciones (entregas por centro)
+  // Tus donaciones: artículos (entregas por centro)
   const dl = $('don-lista'); dl.replaceChildren();
   entregas.sort((a, b) => a.fecha.localeCompare(b.fecha)).forEach(en => {
     const t = el('article', 'tarjeta entrega');
@@ -192,6 +234,18 @@ function render() {
     dl.append(t);
   });
   $('don-vacio').hidden = entregas.length > 0;
+
+  // Tus donaciones: dinero
+  const ml = $('din-lista'); ml.replaceChildren();
+  dineros.forEach(d => {
+    const t = el('article', 'tarjeta entrega');
+    t.append(el('h3', '', pesos(d.monto) + ' → ' + d.centro.nombre));
+    const r = el('div', 'art'); r.append(el('span', '', fmt(d.fecha) + ' · ' + d.ref), badge(d.estado)); t.append(r);
+    if (d.comp) t.append(el('p', 'meta', 'Comprobante: ' + d.comp));
+    ml.append(t);
+  });
+  $('din-vacio').hidden = dineros.length > 0;
+  $('din-total').textContent = pesos(dineros.filter(d => d.estado === 'Confirmada' && new Date(d.fecha).getFullYear() === anio).reduce((t, d) => t + d.monto, 0));
 
   // Resumen y recordatorio
   const delAnio = entregados.filter(i => new Date(i.fecha).getFullYear() === anio);
@@ -213,7 +267,8 @@ function render() {
   // Logros
   const logros = [
     ['Primera donación', entregados.length >= 1], ['5 artículos donados', entregados.length >= 5],
-    ['Racha de 4 semanas', racha >= 4], ['Primera entrega programada', entregas.length >= 1]
+    ['Racha de 4 semanas', racha >= 4], ['Primera entrega programada', entregas.length >= 1],
+    ['Primera donación en dinero', dineros.some(d => d.estado === 'Confirmada')]
   ];
   const lg = $('logros'); lg.replaceChildren();
   logros.forEach(([t, ok]) => lg.append(el('span', 'logro' + (ok ? ' on' : ''), (ok ? '★ ' : '☆ ') + t)));
@@ -228,3 +283,99 @@ function render() {
 $('buscar').oninput = render;
 $('anio').textContent = new Date().getFullYear();
 render();
+
+// ===== Perfil =====
+// DATOS DE EJEMPLO: aquí llegarán los datos reales de la persona desde la base de datos
+const perfil = { nombre: 'Nombre', ap: 'Apellido', am: 'Apellido', fecha: '2000-01-01', correo: 'correo@ejemplo.com', ubic: 'Ciudad, estado', tel: '', foto: '' };
+let fotoTmp = null;   // foto elegida pero aún sin guardar
+
+const iniciales = () => ((perfil.nombre[0] || '') + (perfil.ap[0] || '')).toUpperCase() || 'DN';
+function ponerFoto(a, url, ini) { a.textContent = url ? '' : ini; a.style.backgroundImage = url ? 'url("' + url + '")' : ''; }
+
+function pintarPerfil() {
+  $('u-nombre').textContent = perfil.nombre + ' ' + perfil.ap;
+  $('h-nombre').textContent = perfil.nombre;
+  ponerFoto($('u-ini'), perfil.foto, iniciales());
+  ponerFoto($('pf-foto'), perfil.foto, iniciales());
+}
+function cargarPerfil() {   // llena el formulario con los datos guardados (y descarta lo no guardado)
+  fotoTmp = null;
+  [['p-nombre', 'nombre'], ['p-ap', 'ap'], ['p-am', 'am'], ['p-fecha', 'fecha'], ['p-correo', 'correo'], ['p-ubic', 'ubic'], ['p-tel', 'tel']]
+    .forEach(([id, k]) => $(id).value = perfil[k]);
+  $('f-pass').reset(); $('pw-new2').setCustomValidity('');
+  pintarPerfil();
+}
+$('d-perfil').addEventListener('close', cargarPerfil);
+$('pf-cancelar').onclick = () => $('d-perfil').close();
+
+// Foto
+$('pf-archivo').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  fotoTmp = URL.createObjectURL(f); ponerFoto($('pf-foto'), fotoTmp, ''); e.target.value = '';
+};
+$('pf-quitar').onclick = () => { fotoTmp = ''; ponerFoto($('pf-foto'), '', iniciales()); };
+
+// Guardar datos personales (aquí se enviarán a la base de datos)
+$('f-perfil').onsubmit = e => {
+  e.preventDefault();
+  Object.assign(perfil, {
+    nombre: $('p-nombre').value.trim(), ap: $('p-ap').value.trim(), am: $('p-am').value.trim(),
+    fecha: $('p-fecha').value, ubic: $('p-ubic').value.trim(), tel: $('p-tel').value.trim()
+  });
+  if (fotoTmp !== null) perfil.foto = fotoTmp;
+  $('d-perfil').close();
+  gracias('Perfil actualizado ✓');
+};
+
+// Cambiar contraseña (aquí la verificará y guardará el servidor)
+const pn = $('pw-new'), pn2 = $('pw-new2');
+const igual = () => pn2.setCustomValidity(pn.value === pn2.value ? '' : 'Las contraseñas no coinciden');
+pn.oninput = pn2.oninput = igual;
+$('f-pass').onsubmit = e => {
+  e.preventDefault(); e.target.reset(); igual();
+  gracias('Contraseña actualizada ✓');
+};
+
+// Eliminar cuenta (aquí se borrará en la base de datos)
+$('pf-eliminar').onclick = () => {
+  if (confirm('¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')) location.href = 'index.html';
+};
+
+cargarPerfil();
+
+// ===== Así se usó tu donación =====
+// EJEMPLOS: los centros enviarán estos reportes desde su panel. Borra los de ejemplo al conectar la base de datos.
+const reportes = [
+  { id: 1, centro: centros[0].nombre, fecha: '2026-10-10', donacion: 'Ropa × 3', foto: '', alt: 'Foto de ejemplo', texto: '[Ejemplo] Gracias a tu donación, vestimos a tres niños para la temporada de frío.', gracias: false, nuevo: true },
+  { id: 2, centro: centros[1].nombre, fecha: '2026-10-12', donacion: 'Alimentos × 5', foto: '', alt: 'Foto de ejemplo', texto: '[Ejemplo] Tus alimentos llegaron a una cena comunitaria con 40 familias.', gracias: false, nuevo: true }
+];
+
+function pintarImpacto() {
+  const visibles = reportes.filter(r => !r.oculto), l = $('imp-lista');
+  l.replaceChildren();
+  visibles.forEach(r => {
+    const a = el('article', 'tarjeta reporte'), f = el('div', 'foto-rep');
+    if (r.foto) { const im = document.createElement('img'); im.src = r.foto; im.alt = r.alt || 'Foto compartida por el centro'; im.loading = 'lazy'; f.append(im); }
+    else f.textContent = '[Foto]';
+    a.append(f, el('h3', '', r.centro), el('p', 'meta', fmt(r.fecha) + ' · Tu donación: ' + r.donacion), el('p', '', r.texto));
+    const b = el('div', 'botones');
+    const g = el('button', 'btn' + (r.gracias ? ' claro' : ' azul'), r.gracias ? 'Gracias enviado 💙' : 'Dar gracias 💙');
+    g.disabled = r.gracias;
+    g.onclick = () => { r.gracias = true; pintarImpacto(); gracias('Le avisamos al centro 💙'); };   // aquí se avisará al centro
+    const x = el('button', 'btn claro', 'Reportar foto');
+    x.onclick = () => { if (confirm('¿Reportar esta publicación como inapropiada? Dejará de mostrarse.')) { r.oculto = true; pintarImpacto(); gracias('Gracias por avisarnos'); } };   // aquí se avisará al equipo
+    b.append(g, x); a.append(b); l.append(a);
+  });
+  $('imp-vacio').hidden = visibles.length > 0;
+  const n = visibles.filter(r => r.nuevo).length;
+  $('tab-impacto').textContent = 'Así se usó tu donación' + (n ? ' (' + n + ')' : '');
+}
+$('tab-impacto').addEventListener('click', () => { reportes.forEach(r => r.nuevo = false); pintarImpacto(); });
+
+// SOLO PARA PRUEBAS: el centro enviará esto desde su panel. En la consola:
+// centroEnviaReporte({ centro: 'Nombre', donacion: 'Ropa × 3', texto: 'Mensaje', foto: 'enlace-de-imagen' })
+window.centroEnviaReporte = d => {
+  reportes.unshift({ id: Date.now(), fecha: new Date().toISOString().slice(0, 10), gracias: false, nuevo: true, ...d });
+  pintarImpacto();
+};
+pintarImpacto();
