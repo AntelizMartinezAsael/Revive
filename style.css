@@ -356,3 +356,72 @@ input[readonly] { background: var(--azul-100); color: #3b4a5a; cursor: not-allow
 .foto-rep:has(img) { border-style: solid; }
 .foto-rep img { width: 100%; height: 100%; object-fit: cover; }
 .btn:disabled { opacity: .65; cursor: default; }
+
+/* ===== Registro de centro de acopio ===== */
+.form-grid[hidden] { display: none; }
+.form-grid .subtitulo { grid-column: 1 / -1; margin: .6rem 0 .8rem; padding-top: 1rem; border-top: 2px solid var(--negro); }
+.form-grid .subtitulo:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+.ayuda { display: block; margin-top: .3rem; color: #3b4a5a; }
+#centro-ok { text-align: center; padding: .5rem 0; }
+#centro-ok .relleno { text-align: left; margin-inline: auto; }
+
+/* ===== Panel del centro de acopio ===== */
+.miniaturas, .galeria { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .6rem; }
+.mini { position: relative; width: 84px; height: 84px; border: 2px solid var(--negro); border-radius: 12px; overflow: hidden; }
+.mini img, .galeria img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mini button { position: absolute; top: 3px; right: 3px; width: 24px; height: 24px; padding: 0; border-radius: 50%; border: 1.5px solid var(--negro); background: var(--blanco); font-size: 1rem; line-height: 1; cursor: pointer; }
+.galeria img { width: 160px; height: 120px; border: 2px solid var(--negro); border-radius: 12px; }
+.contactos { list-style: none; padding: 0; margin: .4rem 0 0; }
+.contactos li { padding: .3rem 0; border-bottom: 1px solid var(--azul-300); word-break: break-word; }
+.ayuda.excede { color: #b00020; font-weight: 700; }
+
+/* ===== Página pública de centros (visitante) ===== */
+.filtros { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .filtros { grid-template-columns: 1fr; } }
+.invitacion .relleno { margin-bottom: 1.2rem; }
+#lista .tarjeta { display: flex; flex-direction: column; gap: .4rem; }
+#lista .tarjeta > .badge { align-self: flex-start; }
+#lista .tarjeta p { margin: 0; }
+#lista .btn { align-self: flex-start; margin-top: auto; }
+
+/* ===== Página de inicio: interacciones y secciones nuevas ===== */
+.rota { display: inline-block; background: linear-gradient(transparent 62%, var(--azul-300) 62%); transition: opacity .3s, transform .3s; }
+.rota.sale { opacity: 0; transform: translateY(-.25em); }
+.confianza { list-style: none; padding: 0; margin: 1.5rem 0 0; display: flex; flex-wrap: wrap; gap: .6rem; }
+.confianza li { font-family: var(--f-h3); font-weight: 600; border: 2px solid var(--negro); border-radius: 999px; padding: .3rem .9rem; background: var(--blanco); }
+.enlace { background: none; border: 0; padding: 0; font: inherit; color: var(--azul-900); text-decoration: underline; cursor: pointer; }
+.perfil .enlace { margin-top: .8rem; align-self: flex-start; }
+
+.hero-card, .ej { position: relative; }
+.hero-card { background: var(--blanco); border: 2px solid var(--negro); border-radius: var(--radio); box-shadow: 8px 8px 0 var(--azul-500); padding: 1.6rem; animation: flota 6s ease-in-out infinite; }
+@keyframes flota { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.hero-card h3 { margin-bottom: .1rem; }
+.hc-sub { color: #3b4a5a; margin-bottom: 0; }
+.cinta { position: absolute; top: -13px; right: 18px; background: var(--azul-500); border: 2px solid var(--negro); border-radius: 999px; font-family: var(--f-h4); font-size: .8rem; padding: .1rem .8rem; }
+.ruta { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: .6rem; }
+.ruta li { display: flex; align-items: center; gap: .7rem; padding: .6rem .9rem; border: 2px solid var(--negro); border-radius: 12px; background: var(--blanco); }
+.ruta li::before { content: "✓"; display: grid; place-items: center; width: 26px; height: 26px; flex: none; border-radius: 50%; border: 2px solid var(--negro); background: var(--azul-300); font-weight: 700; }
+.ruta li.actual { background: var(--rosa); }
+.ruta li.actual::before { content: "♥"; background: var(--azul-500); }
+
+.flujo { background: var(--azul-100); border: 2px solid var(--negro); border-radius: var(--radio); padding: 1rem; }
+.flujo svg { width: 100%; height: auto; }
+
+.cat-panel { background: var(--blanco); border: 2px solid var(--negro); border-radius: var(--radio); box-shadow: 6px 6px 0 var(--azul-500); padding: 1.6rem; }
+.pills { list-style: none; padding: 0; margin: 1rem 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+.pills li { border: 2px solid var(--negro); border-radius: 999px; padding: .3rem .9rem; background: var(--azul-100); }
+
+.func, .perfil, .mvo .tarjeta { transition: transform .2s, box-shadow .2s; }
+.func:hover, .perfil:hover, .mvo .tarjeta:hover { transform: translateY(-4px); box-shadow: 6px 6px 0 var(--azul-500); }
+
+.pasos[hidden] { display: none; }
+.lista-check { list-style: none; padding: 0; margin: 1rem 0 0; }
+.lista-check li { position: relative; padding-left: 2.2rem; margin-bottom: .7rem; }
+.lista-check li::before { content: "✓"; position: absolute; left: 0; top: .15rem; width: 1.5rem; height: 1.5rem; display: grid; place-items: center; border-radius: 50%; border: 2px solid var(--negro); background: var(--azul-300); font-size: .8rem; font-weight: 700; }
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visto { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-card { animation: none; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
